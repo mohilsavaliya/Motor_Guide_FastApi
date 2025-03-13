@@ -10,6 +10,8 @@ cloudinary.config(
 
 #util functionn...
 
+
+
 async def upload_image(image):
     result = upload(image)
     print("cloundianry response,",result)
