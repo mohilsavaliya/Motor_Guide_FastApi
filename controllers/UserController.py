@@ -7,15 +7,26 @@ import bcrypt
 
 
 async def addUser(user:User):
+    user.role_id = ObjectId(user.role_id)  # Convert role_id to ObjectId
+
+    # Insert user into MongoDB
+    user_dict = user.dict()
+    result = await user_collection.insert_one(user_dict)
+
+    return {"message": "User added successfully", "user_id": str(result.inserted_id)}
+
+
+
+
     #typeCast
     #print("user....",user.role_id)
     #convert string id to object it comp.,, to mongo db
-    user.role_id = ObjectId(user.role_id)
-    print("after type cast",user.role_id)
-    result = await user_collection.insert_one(user.dict())
+    # user.role_id = ObjectId(user.role_id)
+    # print("after type cast",user.role_id)
+    # result = await user_collection.insert_one(user.dict())
     #return {"Message":"user created successfully"}
     
-    return JSONResponse(status_code=201,content={"message":"User created successfully"})
+    # return JSONResponse(status_code=201,content={"message":"User created successfully"})
     #raise HTTPException(status_code=500,detail="User not created")
 
 # async def getAllUsers():

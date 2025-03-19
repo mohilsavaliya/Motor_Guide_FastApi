@@ -1,42 +1,40 @@
-from config.database import role_collection # roles
-from models.RoleModel import Role,RoleOut
+from config.database import role_collection
+from models.RoleModel import Role, RoleOut
 from bson import ObjectId
-
-#business logic function
+from fastapi import HTTPException
 
 async def getAllRoles():
-    #find --> select * from roles
-    roles = await role_collection.find().to_list()
-    print("roles...................",roles)
-    return [RoleOut(**role) for role in roles]
+    roles = await role_collection.find().to_list(length=None)
+    return [RoleOut(**role) for role in roles if 'role_name' in role]
 
-#//json..
-async def addRole(role:Role):
-    #role -->Object.. json
-    result = await role_collection.insert_one(role.dict())
-    print(result)
-    return {"message":"Role Created Successfully.."}
+async def addRole(role: Role):
+    role_dict = role.dict()
+    role_dict["_id"] = ObjectId()  # Assign a unique ObjectId to the role
+    await role_collection.insert_one(role_dict)
+    return {"message": "Role Created Successfully", "role_id": str(role_dict["_id"])}
+
+async def deleteRoleById(roleId: str):
+    try:
+        obj_id = ObjectId(roleId)
+    except:
+        raise HTTPException(status_code=400, detail="Invalid role ID format")
     
-
-#delete from roles where _id = ?
-
-async def deleteRole(roleId:str):
-    result = await role_collection.delete_one({"_id":ObjectId(roleId)})
-    print("after delete result",result)
-    return {"Message":"Role Deleted Successfully!"}
-
-async def getRoleById(roleId:str):
-    result = await role_collection.find_one({"_id":ObjectId(roleId)})
-    print(result)    
-    #return {"message":"role fetched successfully!"}
-    #return result
-    return RoleOut(**result)
-
-
-
-
-
-
-
-
+    role = await role_collection.find_one({"_id": obj_id})
+    if role is None:
+        raise HTTPException(status_code=404, detail="Role not found")
     
+    await role_collection.delete_one({"_id": obj_id})
+    return {"message": "Role Deleted Successfully"}
+
+async def getRoleById(roleId: str):
+    try:
+        obj_id = ObjectId(roleId)
+    except:
+        raise HTTPException(status_code=400, detail="Invalid role ID format")
+    
+    role = await role_collection.find_one({"_id": obj_id})
+    if not role:
+        raise HTTPException(status_code=404, detail="Role not found")
+    
+    role["_id"] = str(role["_id"])
+    return RoleOut(**role)
