@@ -1,21 +1,21 @@
 from fastapi import APIRouter
-from controllers.CarComparisonContoller import add_comparison, get_comparisons, get_comparison, delete_comparison
+from controllers.CarComparisonController import add_comparison, get_comparisons, delete_comparison
 from models.CarComparisonModel import CarComparison
 
 router = APIRouter(prefix="/car-comparisons", tags=["Car Comparisons"])
 
-@router.post("/comparison")
-def create_comparison(comparison: CarComparison):
-    return add_comparison(comparison)
+@router.post("/")
+async def create_comparison(comparison: CarComparison):
+    return await add_comparison(comparison)
 
-@router.get("/comparisons")
-def list_comparisons():
-    return get_comparisons()
+@router.get("/")
+async def list_comparisons():
+    return await get_comparisons()
 
-@router.get("/comparison/{car_1}/{car_2}")
-def fetch_comparison(car_1: str, car_2: str):
-    return get_comparison(car_1, car_2)
+@router.get("/{comparison_id}")
+async def get_comparison(comparison_id: str):
+    return await get_comparisons(comparison_id)
 
-@router.delete("/comparison/{car_1}/{car_2}")
-def remove_comparison(car_1: str, car_2: str):
-    return delete_comparison(car_1, car_2)
+@router.delete("/{comparison_id}")
+async def remove_comparison(comparison_id: str):
+    return await delete_comparison(comparison_id)
