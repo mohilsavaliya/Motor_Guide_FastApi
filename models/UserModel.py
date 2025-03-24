@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, validator, EmailStr
 from bson import ObjectId
 from typing import Optional, Dict, Any
 import bcrypt
@@ -10,7 +10,7 @@ class User(BaseModel):
     age: int
     status: bool
     role_id: str
-    email: str
+    email: EmailStr
     password: str
 
     @validator("password", pre=True, always=True)

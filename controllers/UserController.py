@@ -4,20 +4,32 @@ from config.database import user_collection, role_collection
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 import bcrypt
+from config.database import db
 
+
+# async def addUser(user: User):
+#     user_dict = user.dict()
+#     user_dict["_id"] = ObjectId()  # Automatically generate user ID
+#     user_dict["role_id"] = ObjectId(user.role_id)  # Convert role_id to ObjectId
+
+#     # Encrypt password before storing
+#     user_dict["password"] = bcrypt.hashpw(user.password.encode("utf-8"), bcrypt.gensalt()).decode()
+
+#     # Insert into MongoDB
+#     result = await user_collection.insert_one(user_dict)
+
+#     return {"message": "User added successfully", "user_id": str(result.inserted_id)}
 
 async def addUser(user: User):
-    user_dict = user.dict()
-    user_dict["_id"] = ObjectId()  # Automatically generate user ID
-    user_dict["role_id"] = ObjectId(user.role_id)  # Convert role_id to ObjectId
-
-    # Encrypt password before storing
-    user_dict["password"] = bcrypt.hashpw(user.password.encode("utf-8"), bcrypt.gensalt()).decode()
-
-    # Insert into MongoDB
-    result = await user_collection.insert_one(user_dict)
-
-    return {"message": "User added successfully", "user_id": str(result.inserted_id)}
+    user_data = user.dict()
+    
+    # Assign a hardcoded role ID (e.g., "user_role_id")
+    user_data["role_id"] = "67da63d8ffba085efbfb11d8"  # Replace with actual ObjectId
+    
+    new_user = await db["users"].insert_one(user_data)
+    created_user = await db["users"].find_one({"_id": new_user.inserted_id})
+    
+    return created_user
 
 
 async def getAllUsers():
