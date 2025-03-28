@@ -23,13 +23,19 @@ from config.database import db
 async def addUser(user: User):
     user_data = user.dict()
     
-    # Assign a hardcoded role ID (e.g., "user_role_id")
-    user_data["role_id"] = "67da63d8ffba085efbfb11d8"  # Replace with actual ObjectId
-    
-    new_user = await db["users"].insert_one(user_data)
-    created_user = await db["users"].find_one({"_id": new_user.inserted_id})
-    
-    return created_user
+    # Assign a hardcoded role ID
+    user_data["role_id"] = "67da63d8ffba085efbfb11d8" #user
+    # user_data["role_id"] = "67da4df256e772c9467c5da6" #admin
+
+    # Ensure MongoDB insertion is awaited correctly
+    result = await db["users"].insert_one(user_data)
+
+    if result.inserted_id:  # Check if insertion was successful
+        created_user = await db["users"].find_one({"_id": result.inserted_id})
+        created_user["_id"] = str(created_user["_id"])  # Convert ObjectId to string
+        return created_user
+
+    raise HTTPException(status_code=500, detail="User creation failed")
 
 
 async def getAllUsers():
