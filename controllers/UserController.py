@@ -6,20 +6,6 @@ from fastapi.responses import JSONResponse
 import bcrypt
 from config.database import db
 
-
-# async def addUser(user: User):
-#     user_dict = user.dict()
-#     user_dict["_id"] = ObjectId()  # Automatically generate user ID
-#     user_dict["role_id"] = ObjectId(user.role_id)  # Convert role_id to ObjectId
-
-#     # Encrypt password before storing
-#     user_dict["password"] = bcrypt.hashpw(user.password.encode("utf-8"), bcrypt.gensalt()).decode()
-
-#     # Insert into MongoDB
-#     result = await user_collection.insert_one(user_dict)
-
-#     return {"message": "User added successfully", "user_id": str(result.inserted_id)}
-
 async def addUser(user: User):
     user_data = user.dict()
     
