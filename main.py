@@ -3,8 +3,10 @@ from routes.RoleRoutes import router as role_router
 from routes.UserRoutes import router as user_router
 from routes.AdminRoutes import router as admin_router
 from routes.CarRoutes import router as addcar_router
+# from routes.CarRoutes import car_router as addcar_router
 from routes.CompanyRoutes import router as company_router
 from routes.CarComparisonRoutes import router as car_comparison_router
+
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
