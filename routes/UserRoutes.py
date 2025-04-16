@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from controllers.UserController import addUser, getAllUsers, getUserById, loginUser, deleteUser
-from models.UserModel import User, UserLogin
+from controllers.UserController import addUser, getAllUsers, getUserById, loginUser, deleteUser, forgotPassword, resetPassword
+
+from models.UserModel import User, UserLogin ,ResetPasswordReq
 
 router = APIRouter()
 
@@ -26,3 +27,11 @@ async def delete_user(userId: str):
 @router.post("/login/")
 async def login_user(user: UserLogin):
     return await loginUser(user)
+
+@router.post("/forgotpassword")
+async def forgot_password(email:str):
+    return await forgotPassword(email)
+
+@router.post("/resetpassword")
+async def reset_password(data:ResetPasswordReq):
+    return await resetPassword(data)
